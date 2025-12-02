@@ -1,34 +1,38 @@
 pipeline {
+  agent any
 
-	agent any
+  stages {
+   
+   stage('clone project') {
+      steps {
+           git branch:'master' , url:'https://github.com/SurendraBabuRN/demo1.git'
+       }
+   }
 
-	
-	tools {
-  maven 'm360'
-}
-	
-	parameters {
-  string defaultValue: 'adi', name: 'name', trim: true
-}
-	stages {
-	  stage('build') {
-		steps {
-		  sh 'mvn install -DskipTests'
-		}
-	  }
+   stage('clean project') {
+      steps {
+           sh 'mvn clean'
+       }
+   }
 
-	  stage('test') {
-		  steps {
-				sh 'echo new'
-			}
-		 post {
-			 always{
-				archiveArtifacts artifacts: 'target/**.jar', followSymlinks: false
-			
-			 }
-			}
-	  }
-		
-}
+   stage('compile') {
+      steps {
+           sh 'mvn compile'
+       }
+   }
 
+   stage('test') {
+      steps {
+           sh 'mvn test'
+       }
+   }
+
+   stage('build') {
+      steps {
+           sh 'mvn clean install'
+       }
+   }
+
+
+  }
 }
